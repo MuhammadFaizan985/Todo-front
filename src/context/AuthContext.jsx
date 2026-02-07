@@ -22,9 +22,7 @@ export const AuthProvider = ({ children }) => {
         } else if (data.user) {
           setUser(data.user);
         } else {
-          // If we got a response but no user data, token might be invalid/expired or format changed
-          // but do not clear immediately if it's just a format mismatch, log it.
-          // However for safety, if we can't get user, we can't proceed.
+          
           console.warn('Unexpected user response format:', data);
           localStorage.removeItem('token');
           setUser(null);
@@ -42,11 +40,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const { data } = await API.post('/users/login', { email, password });
 
-      // Handle the response: data.data contains { user, token }
+      
       if (data.data && data.data.token) {
         localStorage.setItem('token', data.data.token);
         setUser(data.data.user);
-      } else if (data.token) { // Fallback
+      } else if (data.token) { 
         localStorage.setItem('token', data.token);
         setUser(data.user);
       } else {
