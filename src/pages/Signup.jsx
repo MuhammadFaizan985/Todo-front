@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import { CheckSquare, User, Mail, Lock } from 'lucide-react';
+import { CheckSquare, User, Mail, Lock, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function Signup() {
@@ -10,9 +10,23 @@ export default function Signup() {
         email: '',
         password: ''
     });
+    const [image, setImage] = useState(null);
+    const [preview, setPreview] = useState(null);
     const [loading, setLoading] = useState(false);
     const { signup } = useAuth();
     const navigate = useNavigate();
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setImage(file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,8 +48,16 @@ export default function Signup() {
 
         setLoading(true);
 
+        const data = new FormData();
+        data.append('username', formData.username);
+        data.append('email', formData.email);
+        data.append('password', formData.password);
+        if (image) {
+            data.append('profilePicture', image);
+        }
+
         try {
-            await signup(formData);
+            await signup(data);
             toast.success('Account created successfully!');
             navigate('/');
         } catch (err) {
@@ -58,6 +80,29 @@ export default function Signup() {
                 </div>
 
                 <form onSubmit={handleSubmit}>
+                    <div className="profile-upload-container">
+                        <div className="profile-preview-wrapper">
+                            <div className="profile-preview-circle">
+                                {preview ? (
+                                    <img src={preview} alt="Profile Preview" className="profile-preview-img" />
+                                ) : (
+                                    <User size={40} style={{ color: '#cbd5e1' }} />
+                                )}
+                            </div>
+                            <label className="profile-upload-btn">
+                                <Plus size={16} />
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
+                                    disabled={loading}
+                                />
+                            </label>
+                        </div>
+                        <span className="profile-upload-label">Upload Profile Photo</span>
+                    </div>
+
                     <div className="form-group">
                         <label className="form-label">Username</label>
                         <div style={{ position: 'relative' }}>

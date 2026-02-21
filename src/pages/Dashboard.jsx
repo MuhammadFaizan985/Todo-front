@@ -75,9 +75,17 @@ export default function Dashboard() {
       <div className="dashboard-container">
         {/* Header */}
         <header className="header">
-          <div>
-            <h1>Tasks</h1>
-            <p>Welcome back, {user?.username || 'User'}</p>
+          <div className="header-profile">
+            <div className="header-avatar">
+              <img
+                src={user?.profilePicture || "https://res.cloudinary.com/dqr6on7vt/image/upload/v1724240017/user_icon_f9q9q9.png"}
+                alt={user?.username}
+              />
+            </div>
+            <div>
+              <h1>Tasks</h1>
+              <p>Welcome back, {user?.username || 'User'}</p>
+            </div>
           </div>
           <button onClick={handleLogout} className="btn btn-secondary">
             <LogOut size={18} />
